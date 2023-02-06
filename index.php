@@ -115,6 +115,12 @@ elseif (isset($_POST['modifier'])) {
 }
 
 
+
+
+
+
+
+
 ?>
 
 
@@ -252,15 +258,15 @@ elseif (isset($_POST['modifier'])) {
               padding: 0.8%;
             }
           </style>
-          <form action="" class=" d-block d-md-flex " method="post">
-            <input type="number" class="m-0 m-md-5" placeholder="Min">
-            <input type="number" class="m-0 m-md-5" placeholder="Max">
-            <select class="btn btn-primary" style="margin-left: 5%;">
-              <option value="non">tout</option>
+          <form action="index.php" method="post" class=" d-block d-md-flex " method="post">
+            <input type="number" class="m-0 m-md-5" name="min" placeholder="Min">
+            <input type="number" class="m-0 m-md-5" name="max" placeholder="Max">
+            <select class="btn btn-primary" name="valueselect" style="margin-left: 5%;">
+              <option value="">tout</option>
               <option value="location">Location</option>
               <option value="vente">Vente</option>
             </select>
-            <input type="submit" class="btn btn-primary " value="Valider" style="margin-left: 5%;">
+            <input type="submit" class="btn btn-primary " name="Filrer" value="Valider" style="margin-left: 5%;">
           </form>
 
 
@@ -337,26 +343,71 @@ elseif (isset($_POST['modifier'])) {
           }
    
   }
-  $sql = "SELECT * FROM annonce ";
-  $result = mysqli_query($conn, $sql);
-  if (mysqli_num_rows($result) > 0) {
-    // Sortez les données de chaque ligne
-    while ($row = mysqli_fetch_assoc($result)) {
-            echo ' <form action="index.php" method="post">
-            <div class="col-sm-4 md-margin-bottom-40" style="margin-bottom:10px;">
-            <img class="img-responsive" src="img/' . $row["img"] . '" alt="">
-            <h3>'. $row["titre"] .'</h3>
-            <h4 class="coloured">'. $row["types"] .'</h4>
-            <p>'. $row["descriptin"] .'</p>
-            <input type="hidden" name="id"  value="'. $row["id"] . '">
-            <input type="submit" name="modal"  value="more">
-          </div>
-          </form>
-      ';
+ 
+  
+
+  $sql = "SELECT * FROM annonce";
+  
+
+        if (isset($_POST['Filrer'])) {
+          $min = $_POST['min'];
+          $max = $_POST['max'];
+          $valueselect = $_POST['valueselect'];
+
+          if ($valueselect != "" && $min!="" && $max!="") {
+            $sql = "SELECT * FROM annonce where types='$valueselect' and montan between '$min' and '$max' ";
+           }
+           elseif ($valueselect != "" && $min=="" && $max=="") {
+            $sql = "SELECT * FROM annonce where types='$valueselect' ";
+           }
+
+           elseif ($valueselect != "" && $min!="" && $max=="") {
+            $sql = "SELECT * FROM annonce where types='$valueselect' and montan between '$min' and '0' ";
+           }
+           elseif ($valueselect == "" && $min!="" && $max=="") {
+            $sql = "SELECT * FROM annonce where  montan between '$min' and '0' ";
+           }
+            elseif ($valueselect != "" && $min=="" && $max!="") {
+            $sql = "SELECT * FROM annonce where types='$valueselect' and montan between '0' and '$max' ";
+           }
+           elseif ($valueselect == "" && $min=="" && $max!="") {
+            $sql = "SELECT * FROM annonce where  montan between '0' and '$max' ";
+           }
+          elseif ($valueselect == "" && $min!="" && $max!="") {
+            $sql = "SELECT * FROM annonce where  montan between '$min' and '$max' ";
+           }
+        }
+
+
+
+
+
+        $result = mysqli_query($conn, $sql);
+    if (mysqli_num_rows($result) > 0) {
+      // Sortez les données de chaque ligne
+      while ($row = mysqli_fetch_assoc($result)) {
+              echo ' <form action="index.php" method="post">
+              <div class="col-sm-4 md-margin-bottom-40" style="margin-bottom:10px;">
+              <img class="img-responsive" src="img/' . $row["img"] . '" alt="">
+              <h3>'. $row["titre"] .'</h3>
+              <h4 class="coloured">'. $row["types"] .'</h4>
+              <p>'. $row["descriptin"] .'</p>
+              <input type="hidden" name="id"  value="'. $row["id"] . '">
+              <input type="submit" name="modal"  value="more">
+            </div>
+            </form>
+        ';
+      }
+    } else {
+      echo "0 résultats";
     }
-  } else {
-    echo "0 résultats";
-  }
+  
+  
+  
+
+
+
+
 
   mysqli_close($conn);
 ?>

@@ -12,7 +12,17 @@ $conn = mysqli_connect($servername, $username, $password, $dbname);
 
 if (isset($_POST['submit'])) {
   $titre = $_POST['titre'];
-  $images = $_POST['images'];
+
+
+
+  $image = $_FILES['images']['name'];
+  $tmp_name = $_FILES['images']['tmp_name'];
+  $folder = "img/" . $image;
+  move_uploaded_file($tmp_name, $folder);
+
+
+
+  // $images = $_POST['images'];
   $description = $_POST['description'];
   $superficie = $_POST['superficie'];
   $adresse = $_POST['adresse'];
@@ -25,7 +35,7 @@ if (isset($_POST['submit'])) {
     die("Connexion échouée : " . mysqli_connect_error());
   }
   $sql = "insert into annonce (titre, img, descriptin, super, adress, montan, dat, types)
-values ('$titre', '$images', '$description',' $superficie', '$adresse', '$montant', '$date', '$type_annonce')";
+values ('$titre', '$image', '$description',' $superficie', '$adresse', '$montant', '$date', '$type_annonce')";
   if (mysqli_query($conn, $sql)) {
     // echo "Données ajoutées avec succès";
   } else {
@@ -92,7 +102,12 @@ elseif (isset($_POST['modifier'])) {
   $id = $_POST["id"];
 
   $titre = $_POST['titre'];
-  $images = $_POST['images'];
+  $image = $_FILES['images']['name'];
+  $tmp_name = $_FILES['images']['tmp_name'];
+  $folder = "img/" . $image;
+  move_uploaded_file($tmp_name, $folder);
+
+  // $images = $_POST['images'];
   $description = $_POST['description'];
   $superficie = $_POST['superficie'];
   $adresse = $_POST['adresse'];
@@ -386,7 +401,7 @@ elseif (isset($_POST['modifier'])) {
     if (mysqli_num_rows($result) > 0) {
       // Sortez les données de chaque ligne
       while ($row = mysqli_fetch_assoc($result)) {
-              echo ' <form action="index.php" method="post">
+              echo ' <form action="index.php" method="post" enctype="multipart/form-data">
               <div class="col-sm-4 md-margin-bottom-40" style="margin-bottom:10px;">
               <img class="img-responsive" src="img/' . $row["img"] . '" alt="">
               <h3>'. $row["titre"] .'</h3>
@@ -503,7 +518,7 @@ elseif (isset($_POST['modifier'])) {
       <img src="img/remove.png" id="remove" style="width:20px ; position:relative;top:-8px;left:-20px;">
 
       <div style="overflow-y: scroll; height:380px;">
-        <form action="index.php" method="post" style="display: flex; flex-direction:column; ">
+        <form action="index.php" method="post" style="display: flex; flex-direction:column; " enctype="multipart/form-data">
           <input type="text" style="margin: 2%;" name="titre" placeholder="titre" />
           <input type="file" style="margin: 2%;" name="images" placeholder="images" />
           <input type="text" style="margin: 2%;" name="description" placeholder="description" />

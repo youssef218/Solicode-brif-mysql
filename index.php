@@ -35,7 +35,7 @@ if (isset($_POST['submit'])) {
     die("Connexion échouée : " . mysqli_connect_error());
   }
   $sql = "insert into annonce (titre, img, descriptin, super, adress, montan, dat, types)
-values ('$titre', '$image', '$description',' $superficie', '$adresse', '$montant', '$date', '$type_annonce')";
+values ('$titre', '$folder', '$description',' $superficie', '$adresse', '$montant', '$date', '$type_annonce')";
   if (mysqli_query($conn, $sql)) {
     // echo "Données ajoutées avec succès";
   } else {
@@ -100,10 +100,10 @@ elseif (isset($_POST['modifier'])) {
 
   // Préparer la requête de mise à jour
   $id = $_POST["id"];
-
   $titre = $_POST['titre'];
-  $image = $_FILES['images']['name'];
-  $tmp_name = $_FILES['images']['tmp_name'];
+
+  $image = $_FILES['imag']['name'];
+  $tmp_name = $_FILES['imag']['tmp_name'];
   $folder = "img/" . $image;
   move_uploaded_file($tmp_name, $folder);
 
@@ -116,7 +116,7 @@ elseif (isset($_POST['modifier'])) {
   $type_annonce = $_POST['type_annonce'];
 
 
-  $sql = "UPDATE annonce SET titre = '$titre', img = '$images', descriptin = '$description', super = '$superficie', adress = '$adresse', montan = '$montant', dat = '$date', types = '$type_annonce' WHERE id=$id ";
+  $sql = "UPDATE annonce SET titre = '$titre', img = '$folder', descriptin = '$description', super = '$superficie', adress = '$adresse', montan = '$montant', dat = '$date', types = '$type_annonce' WHERE id=$id ";
 
   // Exécuter la requête
   if (mysqli_query($conn, $sql)) {
@@ -332,15 +332,25 @@ elseif (isset($_POST['modifier'])) {
                 <img src="img/remove.png" id="remove" style="width:20px ; position:relative;top:-8px;left:-20px;">
           
                 <div style="overflow-y: scroll; height:380px;">
-                  <form action="index.php" method="post" style="display: flex; flex-direction:column; ">
+                  <form action="index.php" method="post" style="display: flex; flex-direction:column; " enctype="multipart/form-data">
                     <input type="text" style="margin: 2%;"  name="titre" value="' . $rowmodal["titre"] . '" />
-                    <input type="file" style="margin: 2%;" name="images" value="' . $rowmodal["img"] . '" placeholder="images" />
+                    <input type="file" style="margin: 2%;" name="imag" placeholder="images" />
                     <input type="text" style="margin: 2%;" name="description" value="' . $rowmodal["descriptin"] . '" placeholder="description" />
                     <input type="number" style="margin: 2%;" name="superficie" value="' . $rowmodal["super"] . '" placeholder="superficie" />
                     <input type="text" style="margin: 2%;" name="adresse" placeholder="adresse" value="' . $rowmodal["adress"] . '" />
                     <input type="number" style="margin: 2%;" name="montant" placeholder="montant" value="' . $rowmodal["montan"] . '" />
                     <input type="date" style="margin: 2%;" name="date" placeholder="date" value="' . $rowmodal["dat"] . '" />
-                    <input type="text" style="margin: 2%;" name="type_annonce" placeholder="type_annonce" value="' . $rowmodal["types"] . '"/>
+
+
+                    <select class="form-select" aria-label="Default select example"  style="margin: 2%;" name="type_annonce">
+
+
+  <option selected value="">Open this select menu</option>
+  <option value="location">location</option>
+  <option value="vente">vente</option>
+</select>
+
+                    
                     <input type="hidden" name="id"  value="'. $rowmodal["id"] . '">
                     <input type="submit" style="margin: 2%;background-color:#47d147;color:#fff;border:none;" value="modifier" name="modifier">
 
@@ -403,7 +413,7 @@ elseif (isset($_POST['modifier'])) {
       while ($row = mysqli_fetch_assoc($result)) {
               echo ' <form action="index.php" method="post" enctype="multipart/form-data">
               <div class="col-sm-4 md-margin-bottom-40" style="margin-bottom:10px;">
-              <img class="img-responsive" src="img/' . $row["img"] . '" alt="">
+              <img class="img-responsive" src="' . $row["img"] . '" alt="">
               <h3>'. $row["titre"] .'</h3>
               <h4 class="coloured">'. $row["types"] .'</h4>
               <p>'. $row["descriptin"] .'</p>
@@ -526,7 +536,15 @@ elseif (isset($_POST['modifier'])) {
           <input type="text" style="margin: 2%;" name="adresse" placeholder="adresse" />
           <input type="number" style="margin: 2%;" name="montant" placeholder="montant" />
           <input type="date" style="margin: 2%;" name="date" placeholder="date" />
-          <input type="text" style="margin: 2%;" name="type_annonce" placeholder="type_annonce" />
+          
+          <select class="form-select" aria-label="Default select example"  style="margin: 2%;" name="type_annonce">
+
+
+<option selected value="">Open this select menu</option>
+<option value="location">location</option>
+<option value="vente">vente</option>
+</select>
+
           <input type="submit" style="margin: 2%;background-color:#47d147;color:#fff;border:none;" value="valider" name="submit">
         </form>
       </div>
